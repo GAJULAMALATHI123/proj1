@@ -50,3 +50,41 @@ annotate AssetManagerService.OwnershipLedgers with @UI.LineItem: [
   { Value: from_employee.full_name, Label: 'From' }, { Value: to_employee.full_name, Label: 'To' },
   { Value: recorded_by }, { Value: notes }
 ];
+
+
+
+
+
+
+
+
+extend service AssetManagerService with {
+  @readonly @cds.redirection.target: false
+  entity AssetFacts as select from db.Asset as a
+    mixin {
+      assignments        : Association to many AssetAssignments
+                             on assignments.asset_asset_id = $projection.asset_id;
+      maintenanceRecords : Association to many MaintenanceRecords
+                             on maintenanceRecords.asset_asset_id = $projection.asset_id;
+      ownershipHistory   : Association to many OwnershipLedgers
+                             on ownershipHistory.asset_asset_id = $projection.asset_id;
+    }
+    into {
+      key a.asset_id,
+      a.asset_tag,
+      a.serial_number,
+      a.model,
+      a.assetCategory.name             as category,
+      a.status,
+      a.location,
+      a.current_holder.full_name       as owner,
+      a.current_holder.department.name as department,
+      a.vendor.name                    as vendor,
+      assignments,
+      maintenanceRecords,
+      ownershipHistory,
+      a.purchase_date,
+      a.purchase_cost,
+      1                                as assetCount : Integer
+    };
+}
