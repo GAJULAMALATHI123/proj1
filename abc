@@ -1,0 +1,52 @@
+extend service AssetManagerService with {
+  @readonly entity Vendors as projection on db.Vendor;
+}
+
+annotate AssetManagerService.MaintenanceRecords with @(
+  UI.HeaderInfo: { TypeName: 'Maintenance record', TypeNamePlural: 'Maintenance records',
+    Title: { Value: asset.asset_tag }, Description: { Value: type } },
+  UI.SelectionFields: [ status, type, reported_date, service_vendor_vendor_id, covered_by_warranty ],
+  UI.LineItem: [
+    { Value: asset.asset_tag, Label: 'Asset' }, { Value: type }, { Value: status },
+    { Value: reported_date }, { Value: completed_date },
+    { Value: service_vendor.name, Label: 'Vendor' },
+    { Value: outcome }, { Value: cost }, { Value: covered_by_warranty }
+  ]
+);
+
+annotate AssetManagerService.AssetAssignments with @(
+  UI.HeaderInfo: { TypeName: 'Assignment', TypeNamePlural: 'Assignments',
+    Title: { Value: asset.asset_tag }, Description: { Value: employee.full_name } },
+  UI.SelectionFields: [ assignment_status, assigned_date, employee_employee_id ],
+  UI.LineItem: [
+    { Value: asset.asset_tag, Label: 'Asset' }, { Value: employee.full_name, Label: 'Employee' },
+    { Value: assigned_date }, { Value: expected_return_date }, { Value: actual_return_date },
+    { Value: assignment_status }, { Value: assigned_by }
+  ]
+);
+
+
+
+
+
+annotate AssetManagerService.AssetFacts with @(
+  UI.HeaderInfo: { TypeName: 'Asset', TypeNamePlural: 'Assets',
+    Title: { Value: asset_tag }, Description: { Value: model } },
+  UI.Facets: [
+    { $Type: 'UI.ReferenceFacet', ID: 'General',     Label: 'General',     Target: '@UI.FieldGroup#General' },
+    { $Type: 'UI.ReferenceFacet', ID: 'Assignments', Label: 'Assignments', Target: 'assignments/@UI.LineItem' },
+    { $Type: 'UI.ReferenceFacet', ID: 'Maintenance', Label: 'Maintenance', Target: 'maintenanceRecords/@UI.LineItem' },
+    { $Type: 'UI.ReferenceFacet', ID: 'History',     Label: 'History',     Target: 'ownershipHistory/@UI.LineItem' }
+  ],
+  UI.FieldGroup #General: { Data: [
+    { Value: asset_tag }, { Value: serial_number }, { Value: model }, { Value: category },
+    { Value: status }, { Value: owner }, { Value: location }, { Value: department },
+    { Value: vendor }, { Value: purchase_date }, { Value: purchase_cost }
+  ] }
+);
+
+annotate AssetManagerService.OwnershipLedgers with @UI.LineItem: [
+  { Value: transition_date }, { Value: action },
+  { Value: from_employee.full_name, Label: 'From' }, { Value: to_employee.full_name, Label: 'To' },
+  { Value: recorded_by }, { Value: notes }
+];
