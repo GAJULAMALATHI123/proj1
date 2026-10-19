@@ -1,0 +1,3 @@
+asset_category_id,name,lifespan_months,active
+C01,Laptop,48,true
+C02,Monitor,60,true
