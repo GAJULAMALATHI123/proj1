@@ -88,3 +88,47 @@ extend service AssetManagerService with {
       1                                as assetCount : Integer
     };
 }
+
+
+
+
+
+
+
+
+annotate AssetManagerService.AssetFacts with @(
+  UI.KPI #Total: {
+    DataPoint: { Title: 'Total assets', Value: assetCount },
+    Detail: { DefaultPresentationVariant: { Visualizations: ['@UI.Chart#Status'] } }
+  },
+  UI.KPI #Available: {
+    DataPoint: { Title: 'Available', Value: assetCount },
+    SelectionVariant: { SelectOptions: [ { PropertyName: status, Ranges: [ { Sign: #I, Option: #EQ, Low: 'AVAILABLE' } ] } ] },
+    Detail: { DefaultPresentationVariant: { Visualizations: ['@UI.Chart#Status'] } }
+  },
+  UI.KPI #Assigned: {
+    DataPoint: { Title: 'Assigned', Value: assetCount },
+    SelectionVariant: { SelectOptions: [ { PropertyName: status, Ranges: [ { Sign: #I, Option: #EQ, Low: 'ASSIGNED' } ] } ] },
+    Detail: { DefaultPresentationVariant: { Visualizations: ['@UI.Chart#Status'] } }
+  },
+  UI.KPI #Maintenance: {
+    DataPoint: { Title: 'In maintenance', Value: assetCount },
+    SelectionVariant: { SelectOptions: [ { PropertyName: status, Ranges: [ { Sign: #I, Option: #EQ, Low: 'MAINTENANCE' } ] } ] },
+    Detail: { DefaultPresentationVariant: { Visualizations: ['@UI.Chart#Status'] } }
+  },
+  UI.KPI #Retired: {
+    DataPoint: { Title: 'Retired', Value: assetCount },
+    SelectionVariant: { SelectOptions: [ { PropertyName: status, Ranges: [ { Sign: #I, Option: #EQ, Low: 'RETIRED' } ] } ] },
+    Detail: { DefaultPresentationVariant: { Visualizations: ['@UI.Chart#Status'] } }
+  }
+);
+
+
+
+"keyPerformanceIndicators": {
+  "Total":       { "model": "kpi" },
+  "Available":   { "model": "kpi" },
+  "Assigned":    { "model": "kpi" },
+  "Maintenance": { "model": "kpi" },
+  "Retired":     { "model": "kpi" },
+},
