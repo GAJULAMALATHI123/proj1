@@ -1,0 +1,8 @@
+# Create a file named  .env  in the project root (asset-app/.env). Never commit it to git.
+# Personal Outlook.com account (needs 2-step verification and an APP PASSWORD, not your normal password):
+SMTP_HOST=smtp-mail.outlook.com
+SMTP_PORT=587
+SMTP_USER=youraddress@outlook.com
+SMTP_PASS=your-app-password
+MAIL_FROM=youraddress@outlook.com
+# Microsoft 365 work account: SMTP_HOST=smtp.office365.com  (only works if your admin allows "SMTP AUTH")

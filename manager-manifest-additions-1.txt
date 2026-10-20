@@ -1,0 +1,15 @@
+=== PART 1: inside "routing" -> "routes": [ ... ]  (add a comma after the last existing route) ===
+{ "name": "AttentionList", "pattern": "Attention:?query:", "target": "AttentionList" }
+
+=== PART 2: inside "routing" -> "targets": { ... }  (add a comma after the last existing target) ===
+"AttentionList": { "type": "Component", "id": "AttentionList", "name": "sap.fe.templates.ListReport",
+  "options": { "settings": { "contextPath": "/AttentionItems", "initialLoad": "Enabled", "variantManagement": "None", "hideFilterBar": true,
+    "controlConfiguration": { "@com.sap.vocabularies.UI.v1.LineItem": { "tableSettings": { "type": "ResponsiveTable", "selectionMode": "None" } } } } } }
+
+=== PART 3: toolbar buttons on the dashboard. In the AssetFactsList target's "controlConfiguration" -> "@com.sap.vocabularies.UI.v1.LineItem",
+add an "actions" entry next to the existing "tableSettings" (replace YOURAPPID with "sap.app" -> "id" from this manifest.json) ===
+"actions": {
+  "GoAttention": { "press": "YOURAPPID.ext.Nav.goAttention", "text": "Operational attention", "enabled": true },
+  "DownloadPdf": { "press": "YOURAPPID.ext.Nav.downloadPdf", "text": "Download PDF", "enabled": true },
+  "EmailReport": { "press": "YOURAPPID.ext.Nav.emailReport", "text": "Email Report", "enabled": true }
+}
