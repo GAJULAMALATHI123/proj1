@@ -132,3 +132,35 @@ annotate AssetManagerService.AssetFacts with @(
   "Maintenance": { "model": "kpi" },
   "Retired":     { "model": "kpi" },
 },
+
+
+
+
+
+annotate AssetManagerService.AssetFacts with @(
+  UI.Chart #Category: {
+    Title: 'Assets by category', ChartType: #Bar,
+    Dimensions: [ category ],
+    DimensionAttributes: [ { Dimension: category, Role: #Category } ],
+    Measures: [ assetCount ],
+    MeasureAttributes: [ { Measure: assetCount, Role: #Axis1, DataPoint: '@UI.DataPoint#Count' } ]
+  },
+  UI.PresentationVariant #ByStatus: {
+    Text: 'By status',
+    Visualizations: [ '@UI.Chart#Status', '@UI.LineItem' ]
+  },
+  UI.PresentationVariant #ByCategory: {
+    Text: 'By category',
+    Visualizations: [ '@UI.Chart#Category', '@UI.LineItem' ]
+  }
+);
+
+
+
+
+"views": {
+  "paths": [
+    { "annotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ByStatus" },
+    { "annotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant#ByCategory" }
+  ]
+},
