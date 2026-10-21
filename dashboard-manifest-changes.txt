@@ -1,0 +1,20 @@
+All changes are in app/manager-dashboard/webapp/manifest.json  (the app id there is "managerdashboard").
+
+=== CHANGE 1: sap.ui5 -> dependencies -> libs : add two entries next to "sap.fe.templates" ===
+"sap.fe.core": {},
+"sap.fe.macros": {},
+
+=== CHANGE 2: sap.ui5 -> resources -> css : replace  "css": []  with ===
+"css": [ { "uri": "css/style.css" } ]
+
+=== CHANGE 3: routing -> routes : put the new route FIRST, and change the old list route's pattern ===
+{ "name": "DashboardPage", "pattern": ":?query:", "target": "DashboardPage" },
+{ "name": "AssetFactsList", "pattern": "classic:?query:", "target": "AssetFactsList" },
+... (keep your other routes: AssetFactsObjectPage, AttentionList)
+
+=== CHANGE 4: routing -> targets : add this target (comma after the previous one) ===
+"DashboardPage": { "type": "Component", "id": "DashboardPage", "name": "sap.fe.core.fpm",
+  "options": { "settings": { "viewName": "managerdashboard.ext.view.Dashboard", "contextPath": "/AssetFacts" } } }
+
+The old dashboard stays available at:  .../managerdashboard/index.html#/classic
+To go back to the old one only: set the DashboardPage pattern to "new:?query:" and the AssetFactsList pattern back to ":?query:".

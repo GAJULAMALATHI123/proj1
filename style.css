@@ -1,0 +1,15 @@
+/* Save as  webapp/css/style.css  in the Manager app */
+.kpiRow { padding: 0.5rem 1rem; gap: 1rem; }
+.kpiCard {
+  flex: 1 1 11rem; min-width: 11rem; height: 6.5rem; box-sizing: border-box;
+  background: #fff; border-radius: 0.5rem; border-top: 4px solid #8396a8;
+  padding: 0.75rem 1rem; box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.2);
+}
+.kpiTotal       { border-top-color: #8396a8; }
+.kpiAvailable   { border-top-color: #107e3e; }
+.kpiAssigned    { border-top-color: #0a6ed1; }
+.kpiMaintenance { border-top-color: #e9730c; }
+.kpiRetired     { border-top-color: #8396a8; }
+.kpiTitle { font-size: 0.875rem; color: #556b82; }
+.kpiValue { font-size: 2rem; color: #32363a; line-height: 2.5rem; }
+.kpiNote  { font-size: 0.75rem; color: #6a6d70; }
