@@ -154,3 +154,33 @@ module.exports = class AssetManagerService extends cds.ApplicationService {
     return super.init();
   }
 };
+
+
+
+
+
+
+
+
+service AssetManagerService @(path: '/odata/v4/manager', requires: ['Manager','Admin'], impl: './manager-service.js') {
+  @readonly entity Employees          as projection on db.Employee;
+  @readonly entity AssetCategories    as projection on db.AssetCategory;
+  @readonly entity AssetRequests      as projection on db.AssetRequest;
+  @readonly entity Assets              as projection on db.Asset;
+  @readonly entity AssetAssignments    as projection on db.AssetAssignment;
+  @readonly entity OwnershipLedgers    as projection on db.OwnershipLedger;
+  @readonly entity MaintenanceRecords  as projection on db.MaintenanceRecord;
+
+  action requestAsset(
+    employeeId : UUID,
+    categoryId : UUID,
+    reason : String
+  ) returns String;
+
+  // Analytics and reporting
+  @readonly entity ReportLogs as projection on db.ReportLog;
+
+  function exportPdf(filter : String) returns LargeString;
+  action emailReport(filter : String, to : String) returns String;
+}
+
