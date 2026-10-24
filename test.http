@@ -1,0 +1,453 @@
+### Asset Lifecycle App — CRUD and action tests
+### Save this file as test.http in the asset-app project root.
+### Run `cds watch` first. Default URL below is local CAP.
+### The x-user-id header matches the custom-auth setup visible in this project.
+### If your local custom auth uses a different identity, adjust the header.
+### Replace every UUID placeholder with a real ID returned by a GET request.
+### Run CREATE / UPDATE / DELETE only against test records, not production data.
+
+@baseUrl = http://localhost:4004
+@admin = {{baseUrl}}/odata/v4/admin
+@manager = {{baseUrl}}/odata/v4/manager
+@user = {{baseUrl}}/odata/v4/user
+
+@adminUser = admin
+@managerUser = manager
+@normalUser = alice
+
+@departmentId = 11111111-1111-1111-1111-111111111111
+@employeeId = 22222222-2222-2222-2222-222222222222
+@categoryId = 33333333-3333-3333-3333-333333333333
+@vendorId = 44444444-4444-4444-4444-444444444444
+@assetId = 55555555-5555-5555-5555-555555555555
+@requestId = 66666666-6666-6666-6666-666666666666
+
+###############################################################################
+# ADMIN — READ / LIST
+###############################################################################
+
+### List departments
+GET {{admin}}/Departments
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List employees
+GET {{admin}}/Employees
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List asset categories
+GET {{admin}}/AssetCategories
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List vendors
+GET {{admin}}/Vendors
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List assets
+GET {{admin}}/Assets
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List maintenance records (read-only)
+GET {{admin}}/MaintenanceRecords
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List assignments (read-only)
+GET {{admin}}/AssetAssignments
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List ownership ledger (read-only)
+GET {{admin}}/OwnershipLedgers
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List archive records (read-only)
+GET {{admin}}/ArchiveRecords
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### List manager asset requests
+GET {{admin}}/AssetRequests
+x-user-id: {{adminUser}}
+Accept: application/json
+
+###############################################################################
+# ADMIN — CREATE (POST)
+###############################################################################
+
+### Create department
+POST {{admin}}/Departments
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "dept_id": "{{departmentId}}",
+  "name": "IT Test Department",
+  "cost_center": "CC1001",
+  "is_active": true
+}
+
+### Create employee
+POST {{admin}}/Employees
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "employee_id": "{{employeeId}}",
+  "full_name": "Test Employee",
+  "email": "test.employee@example.com",
+  "phone": "9000000001",
+  "department_dept_id": "{{departmentId}}",
+  "location": "Bengaluru",
+  "status": "ACTIVE"
+}
+
+### Create asset category
+POST {{admin}}/AssetCategories
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "asset_category_id": "{{categoryId}}",
+  "name": "Laptop Test",
+  "lifespan_months": 48,
+  "is_active": true
+}
+
+### Create vendor
+POST {{admin}}/Vendors
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "vendor_id": "{{vendorId}}",
+  "name": "Test Repair Vendor",
+  "email": "vendor@example.com",
+  "is_active": true
+}
+
+### Create asset
+POST {{admin}}/Assets
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "asset_id": "{{assetId}}",
+  "asset_tag": "TEST-LAP-001",
+  "serial_number": "TEST-SERIAL-001",
+  "assetCategory_asset_category_id": "{{categoryId}}",
+  "vendor_vendor_id": "{{vendorId}}",
+  "model": "Test Laptop",
+  "location": "Bengaluru",
+  "purchase_date": "2026-10-24",
+  "purchase_cost": 55000.00,
+  "warranty_expiry": "2028-10-24",
+  "status": "AVAILABLE"
+}
+
+###############################################################################
+# ADMIN — READ ONE / UPDATE (PATCH) / DELETE
+# Note: use IDs returned by the GET requests. Draft-enabled entities may require
+# draft edit/activation requests rather than a direct PATCH, depending on CAP.
+###############################################################################
+
+### Read one department
+GET {{admin}}/Departments({{departmentId}})
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### Update department
+PATCH {{admin}}/Departments({{departmentId}})
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "name": "IT Test Department Updated",
+  "cost_center": "CC1002"
+}
+
+### Delete department (only if no dependent records)
+DELETE {{admin}}/Departments({{departmentId}})
+x-user-id: {{adminUser}}
+
+### Read one employee
+GET {{admin}}/Employees({{employeeId}})
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### Update employee
+PATCH {{admin}}/Employees({{employeeId}})
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "phone": "9000000002",
+  "location": "Hyderabad"
+}
+
+### Delete employee (only if no linked assignments/history)
+DELETE {{admin}}/Employees({{employeeId}})
+x-user-id: {{adminUser}}
+
+### Read one category
+GET {{admin}}/AssetCategories({{categoryId}})
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### Update category
+PATCH {{admin}}/AssetCategories({{categoryId}})
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "name": "Laptop Test Updated",
+  "lifespan_months": 60
+}
+
+### Delete category (only if no assets depend on it)
+DELETE {{admin}}/AssetCategories({{categoryId}})
+x-user-id: {{adminUser}}
+
+### Read one vendor
+GET {{admin}}/Vendors({{vendorId}})
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### Update vendor
+PATCH {{admin}}/Vendors({{vendorId}})
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "name": "Test Repair Vendor Updated",
+  "is_active": true
+}
+
+### Delete vendor (only if no dependent records)
+DELETE {{admin}}/Vendors({{vendorId}})
+x-user-id: {{adminUser}}
+
+### Read one asset
+GET {{admin}}/Assets({{assetId}})
+x-user-id: {{adminUser}}
+Accept: application/json
+
+### Update asset details (use only an unassigned test asset)
+PATCH {{admin}}/Assets({{assetId}})
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "model": "Test Laptop Updated",
+  "location": "Hyderabad",
+  "purchase_cost": 56000.00
+}
+
+### Delete an unused test asset only
+DELETE {{admin}}/Assets({{assetId}})
+x-user-id: {{adminUser}}
+
+###############################################################################
+# ADMIN — ASSET LIFECYCLE ACTIONS
+# These actions mutate records. Use a valid test asset and real related IDs.
+###############################################################################
+
+### Assign asset
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.assign
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "employeeId": "{{employeeId}}",
+  "distributionDate": "2026-10-24",
+  "remarks": "Test assignment"
+}
+
+### Transfer asset to employee
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.transfer
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "toEmployeeId": "{{employeeId}}",
+  "transferDate": "2026-10-24",
+  "remarks": "Test transfer"
+}
+
+### Return asset
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.returnAsset
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "returnDate": "2026-10-24",
+  "remarks": "Test return"
+}
+
+### Start maintenance
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.createMaintenance
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "maintenanceType": "REPAIR",
+  "description": "Testing repair workflow"
+}
+
+### Complete maintenance
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.completeMaintenance
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "outcome": "REPAIRED",
+  "vendorId": "{{vendorId}}",
+  "cost": 1500.00
+}
+
+### Retire asset — do this only when finished testing it
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.retire
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "reason": "Test retirement",
+  "retirementDate": "2026-10-24"
+}
+
+### Archive retired asset — destructive lifecycle action
+POST {{admin}}/Assets({{assetId}})/AssetAdminService.archive
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "archiveReason": "RETIRED",
+  "disposalMethod": "RECYCLED",
+  "certNo": "TEST-CERT-001",
+  "complianceRef": "TEST-COMP-001"
+}
+
+###############################################################################
+# MANAGER — READ
+###############################################################################
+
+### Manager assets
+GET {{manager}}/Assets
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager maintenance records
+GET {{manager}}/MaintenanceRecords
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager assignments
+GET {{manager}}/AssetAssignments
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager categories
+GET {{manager}}/AssetCategories
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager attention items
+GET {{manager}}/AttentionItems
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager's asset requests
+GET {{manager}}/AssetRequests
+x-user-id: {{managerUser}}
+Accept: application/json
+
+### Manager submits an asset request
+POST {{manager}}/requestAsset
+x-user-id: {{managerUser}}
+Content-Type: application/json
+
+{
+  "employeeId": "{{employeeId}}",
+  "categoryId": "{{categoryId}}",
+  "reason": "Test request for project work"
+}
+
+###############################################################################
+# USER — READ AND RAISE MAINTENANCE REQUEST
+###############################################################################
+
+### User assets
+GET {{user}}/Assets
+x-user-id: {{normalUser}}
+Accept: application/json
+
+### User assignments
+GET {{user}}/AssetAssignments
+x-user-id: {{normalUser}}
+Accept: application/json
+
+### User maintenance records
+GET {{user}}/MaintenanceRecords
+x-user-id: {{normalUser}}
+Accept: application/json
+
+### User raises a maintenance request
+POST {{user}}/RaiseMaintenanceRequest
+x-user-id: {{normalUser}}
+Content-Type: application/json
+
+{
+  "assetId": "{{assetId}}",
+  "description": "Test: laptop is not working properly"
+}
+
+###############################################################################
+# ADMIN — ASSET REQUEST REVIEW
+###############################################################################
+
+### Fulfill a pending manager asset request
+POST {{admin}}/fulfillAssetRequest
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "requestId": "{{requestId}}",
+  "assetId": "{{assetId}}",
+  "distributionDate": "2026-10-24",
+  "remarks": "Test request fulfilled"
+}
+
+### Reject a pending manager asset request
+POST {{admin}}/rejectAssetRequest
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "requestId": "{{requestId}}",
+  "reviewNotes": "Test rejection after review"
+}
+
+###############################################################################
+# ADMIN — REPORTS
+###############################################################################
+
+### Export PDF (response may be Base64 text)
+POST {{admin}}/exportPdf
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{}
+
+### Email report (requires SMTP configuration on the server)
+POST {{admin}}/emailReport
+x-user-id: {{adminUser}}
+Content-Type: application/json
+
+{
+  "to": "YOUR_TEST_EMAIL@example.com"
+}
