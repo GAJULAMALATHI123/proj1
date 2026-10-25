@@ -1,46 +1,49 @@
-/role-landing.html
-[
-  {
-    "source": "^/role-landing\\.html$",
-    "target": "/role-landing.html",
-    "localDir": "resources",
-    "authenticationType": "xsuaa"
-  },
-  {
-    "source": "^/user-api(.*)$",
-    "target": "$1",
-    "service": "sap-approuter-userapi",
-    "authenticationType": "xsuaa",
-    "csrfProtection": false
-  },
-  {
-    "source": "^/adminasset/(.*)$",
-    "localDir": "resources",
-    "authenticationType": "xsuaa",
-    "scope": "$XSAPPNAME.Admin"
-  },
-  {
-    "source": "^/manager-dashboard/(.*)$",
-    "localDir": "resources",
-    "authenticationType": "xsuaa",
-    "scope": "$XSAPPNAME.Manager"
-  },
-  {
-    "source": "^/user-dashboard/(.*)$",
-    "localDir": "resources",
-    "authenticationType": "xsuaa",
-    "scope": "$XSAPPNAME.User"
-  },
-  {
-    "source": "^/login/(.*)$",
-    "localDir": "resources"
-  },
-  {
-    "source": "^/(.*)$",
-    "target": "$1",
-    "destination": "srv-api",
-    "csrfProtection": false
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Asset Lifecycle</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;min-height:100vh;
+display:grid;place-items:center;background:#f3f6fa;color:#183247}
+main{background:white;padding:32px;border-radius:14px;
+max-width:480px;margin:20px;box-shadow:0 8px 32px #18324718}
+h2{margin-top:0}p{line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+<h2>Asset Lifecycle Management</h2>
+<p id="status">Checking your account and dashboard permissions…</p>
+</main>
+<script>
+(async function(){
+  const status = document.getElementById('status');
+  try {
+    const response = await fetch('/user-api/currentUser', {
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!response.ok) throw new Error('Could not verify your account permissions.');
+    const user = await response.json();
+    const scopes = Array.isArray(user.scopes) ? user.scopes : [];
+    const has = role => scopes.some(scope => scope.endsWith('.' + role));
+
+    if (has('Admin')) {
+      location.replace('/adminasset/index.html');
+    } else if (has('Manager')) {
+      location.replace('/manager-dashboard/index.html');
+    } else if (has('User')) {
+      location.replace('/user-dashboard/index.html');
+    } else {
+      status.textContent =
+        'Your account is signed in, but no dashboard role was found. Ask your BTP administrator to check your role collection assignment.';
+    }
+  } catch (error) {
+    status.textContent =
+      'We could not verify your dashboard access. Refresh the page or ask your BTP administrator to check the XSUAA configuration and role assignments.';
   }
-]
-user: asset-app $ ^C
-user: asset-app $ 
+})();
+</script>
+</body>
