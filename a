@@ -1,28 +1,46 @@
-{
-  "welcomeFile": "/login/index.html",
-  "authenticationMethod": "route",
-  "routes": [
-    {
-      "source": "^/adminasset/(.*)$",
-      "localDir": "resources"
-    },
-    {
-      "source": "^/manager-dashboard/(.*)$",
-      "localDir": "resources"
-    },
-    {
-      "source": "^/user-dashboard/(.*)$",
-      "localDir": "resources"
-    },
-    {
-      "source": "^/login/(.*)$",
-      "localDir": "resources"
-    },
-    {
-      "source": "^/(.*)$",
-      "target": "$1",
-      "destination": "srv-api",
-      "csrfProtection": false
-    }
-  ]
-}
+/role-landing.html
+[
+  {
+    "source": "^/role-landing\\.html$",
+    "target": "/role-landing.html",
+    "localDir": "resources",
+    "authenticationType": "xsuaa"
+  },
+  {
+    "source": "^/user-api(.*)$",
+    "target": "$1",
+    "service": "sap-approuter-userapi",
+    "authenticationType": "xsuaa",
+    "csrfProtection": false
+  },
+  {
+    "source": "^/adminasset/(.*)$",
+    "localDir": "resources",
+    "authenticationType": "xsuaa",
+    "scope": "$XSAPPNAME.Admin"
+  },
+  {
+    "source": "^/manager-dashboard/(.*)$",
+    "localDir": "resources",
+    "authenticationType": "xsuaa",
+    "scope": "$XSAPPNAME.Manager"
+  },
+  {
+    "source": "^/user-dashboard/(.*)$",
+    "localDir": "resources",
+    "authenticationType": "xsuaa",
+    "scope": "$XSAPPNAME.User"
+  },
+  {
+    "source": "^/login/(.*)$",
+    "localDir": "resources"
+  },
+  {
+    "source": "^/(.*)$",
+    "target": "$1",
+    "destination": "srv-api",
+    "csrfProtection": false
+  }
+]
+user: asset-app $ ^C
+user: asset-app $ 
